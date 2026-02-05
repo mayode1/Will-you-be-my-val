@@ -357,7 +357,12 @@
       redirecting = true;
 
       const myNumber = "2348152826903";
-      const message = encodeURIComponent("Yess! I’ll be your Valentine. Happy now🥺💘....");
+      const message =
+       "Yess! I'll be your Valentine. Happy now 🥺💘";
+
+      window.location.href =
+       "https://wa.me/2348152826903?text=" + message;
+
 
       openModal();
 
