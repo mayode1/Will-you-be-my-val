@@ -294,148 +294,153 @@
     </div>
   </div>
 
-  <script>
-    // ---- floating hearts background ----
-    const heartsWrap = document.getElementById("hearts");
-    const heartCount = 26;
+ <script>
+  // ---- floating hearts background ----
+  const heartsWrap = document.getElementById("hearts");
+  const heartCount = 26;
 
-    for (let i = 0; i < heartCount; i++) {
-      const h = document.createElement("div");
-      h.className = "heart";
+  for (let i = 0; i < heartCount; i++) {
+    const h = document.createElement("div");
+    h.className = "heart";
 
-      const left = Math.random() * 100;
-      const delay = Math.random() * 6;
-      const dur = 6 + Math.random() * 8;
-      const size = 10 + Math.random() * 14;
+    const left = Math.random() * 100;
+    const delay = Math.random() * 6;
+    const dur = 6 + Math.random() * 8;
+    const size = 10 + Math.random() * 14;
 
-      h.style.left = left + "vw";
-      h.style.animationDelay = delay + "s";
-      h.style.animationDuration = dur + "s";
-      h.style.width = size + "px";
-      h.style.height = size + "px";
-      h.style.opacity = 0.12 + Math.random() * 0.18;
+    h.style.left = left + "vw";
+    h.style.animationDelay = delay + "s";
+    h.style.animationDuration = dur + "s";
+    h.style.width = size + "px";
+    h.style.height = size + "px";
+    h.style.opacity = 0.12 + Math.random() * 0.18;
 
-      heartsWrap.appendChild(h);
-    }
+    heartsWrap.appendChild(h);
+  }
 
-    // ---- modal actions ----
-    const yesBtn = document.getElementById("yesBtn");
-    const noBtn = document.getElementById("noBtn");
-    const overlay = document.getElementById("overlay");
-    const closeBtn = document.getElementById("closeBtn");
-    const countdownEl = document.getElementById("countdown");
-    const modalText = document.getElementById("modalText");
+  // ---- modal actions ----
+  const yesBtn = document.getElementById("yesBtn");
+  const noBtn = document.getElementById("noBtn");
+  const overlay = document.getElementById("overlay");
+  const closeBtn = document.getElementById("closeBtn");
+  const countdownEl = document.getElementById("countdown");
+  const modalText = document.getElementById("modalText");
 
-    let redirectTimer = null;
-    let countdownTimer = null;
-    let redirecting = false;
+  let redirectTimer = null;
+  let countdownTimer = null;
+  let redirecting = false;
 
-    function openModal() {
-      overlay.style.display = "flex";
-      spawnConfetti();
-    }
+  function openModal() {
+    overlay.style.display = "flex";
+    spawnConfetti();
+  }
 
-    function stopRedirectTimers(){
-      if (redirectTimer) clearTimeout(redirectTimer);
-      if (countdownTimer) clearInterval(countdownTimer);
-      redirectTimer = null;
-      countdownTimer = null;
-    }
+  function stopRedirectTimers() {
+    if (redirectTimer) clearTimeout(redirectTimer);
+    if (countdownTimer) clearInterval(countdownTimer);
+    redirectTimer = null;
+    countdownTimer = null;
+  }
 
-    function closeModal() {
-      overlay.style.display = "none";
-      document.getElementById("confetti").innerHTML = "";
-      stopRedirectTimers();
-      redirecting = false;
-      modalText.textContent = "Opening WhatsApp in 3 seconds…";
-      countdownEl.textContent = "";
-    }
+  function closeModal() {
+    overlay.style.display = "none";
+    document.getElementById("confetti").innerHTML = "";
+    stopRedirectTimers();
+    redirecting = false;
 
-    // ✅ YES: show celebration first, then redirect after 3 seconds
-    yesBtn.addEventListener("click", () => {
-      if (redirecting) return;
-      redirecting = true;
+    // Reset modal text
+    if (modalText) modalText.textContent = "Opening WhatsApp in 6 seconds…";
+    if (countdownEl) countdownEl.textContent = "";
+  }
 
-      const myNumber = "2348132001678";
-      const message =
-       "Yess! I'll be your Valentine. Are you happy now? 🥺💘";
+  // ✅ YES: show celebration first, then redirect after 6 seconds
+  yesBtn.addEventListener("click", () => {
+    if (redirecting) return;
+    redirecting = true;
 
-      window.location.href =
-       "https://wa.me/2348132001678?text=" + message;
+    const myNumber = "2348132001678";
+    const message = "Yess! I'll be your Valentine. Are you happy now? 🥺💘";
 
+    openModal();
 
-      openModal();
+    // Optional: update modal text if you have it
+    if (modalText) modalText.textContent = "Opening WhatsApp in 6 seconds…";
 
-      let secondsLeft = 3;
-      countdownEl.textContent = `Redirecting in ${secondsLeft}s...`;
+    let secondsLeft = 6;
+    if (countdownEl) countdownEl.textContent = `Redirecting in ${secondsLeft}s...`;
 
-      countdownTimer = setInterval(() => {
-        secondsLeft--;
-        if (secondsLeft <= 0) {
-          clearInterval(countdownTimer);
-          countdownTimer = null;
-          countdownEl.textContent = "Redirecting now...";
-        } else {
-          countdownEl.textContent = `Redirecting in ${secondsLeft}s...`;
-        }
-      }, 1000);
-
-      redirectTimer = setTimeout(() => {
-        // same-tab redirect avoids popup blockers
-        window.location.href = `https://wa.me/${myNumber}?text=${message}`;
-      }, 3000);
-    });
-
-    closeBtn.addEventListener("click", closeModal);
-    overlay.addEventListener("click", (e) => {
-      if (e.target === overlay) closeModal();
-    });
-
-    // ✅ "Pester" messages when NO is pressed (buttons do NOT move)
-    const subtitle = document.getElementById("subtitle");
-    let noCount = 0;
-
-    const noMessages = [
-      "Are you sure? 🥺",
-      "Don’t do this to me, dear 😭💔",
-      "Pleaseee, just press YES 🙏💖",
-      "Wait… think again 😭",
-      "What do you want 😭",
-      "I’ll behave, I promise 😇",
-      "No button is breaking my heart 💔",
-      "Okay last chance… say YES? 🥺💘"
-    ];
-
-    noBtn.addEventListener("click", () => {
-      noCount++;
-      subtitle.textContent = noMessages[(noCount - 1) % noMessages.length];
-
-      if (noCount === 5) noBtn.textContent = "Please? 😭";
-      if (noCount === 8) noBtn.textContent = "Don’t say no 😅";
-      if (noCount === 12) noBtn.textContent = "Okay… YES? 🥺";
-    });
-
-    // ---- confetti ----
-    function spawnConfetti() {
-      const confetti = document.getElementById("confetti");
-      confetti.innerHTML = "";
-      const pieces = 70;
-
-      for (let i = 0; i < pieces; i++) {
-        const p = document.createElement("div");
-        p.className = "piece";
-        p.style.left = Math.random() * 100 + "%";
-        p.style.top = -10 - Math.random() * 30 + "px";
-        p.style.transform = `rotate(${Math.random() * 180}deg)`;
-        p.style.animationDuration = 1.8 + Math.random() * 2.2 + "s";
-        p.style.animationDelay = Math.random() * 0.25 + "s";
-
-        const hue = Math.floor(Math.random() * 360);
-        p.style.background = `hsl(${hue} 90% 60%)`;
-
-        confetti.appendChild(p);
+    countdownTimer = setInterval(() => {
+      secondsLeft--;
+      if (secondsLeft <= 0) {
+        clearInterval(countdownTimer);
+        countdownTimer = null;
+        if (countdownEl) countdownEl.textContent = "Redirecting now...";
+      } else {
+        if (countdownEl) countdownEl.textContent = `Redirecting in ${secondsLeft}s...`;
       }
+    }, 1000);
+
+    redirectTimer = setTimeout(() => {
+      // same-tab redirect avoids popup blockers + encode keeps emoji safe
+      const url = `https://wa.me/${myNumber}?text=${encodeURIComponent(message)}`;
+      window.location.href = url;
+    }, 6000);
+  });
+
+  closeBtn.addEventListener("click", closeModal);
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) closeModal();
+  });
+
+  // ✅ "Pester" messages when NO is pressed (buttons do NOT move)
+  const subtitle = document.getElementById("subtitle");
+  let noCount = 0;
+
+  const noMessages = [
+    "Are you sure? 🥺",
+    "Don’t do this to me, dear 😭💔",
+    "Pleaseee, just press YES 🙏💖",
+    "Wait… think again 😭",
+    "What do you want 😭",
+    "I’ll behave, I promise 😇",
+    "No button is breaking my heart 💔",
+    "Okay last chance… say YES? 🥺💘"
+  ];
+
+  noBtn.addEventListener("click", () => {
+    noCount++;
+    if (subtitle) subtitle.textContent = noMessages[(noCount - 1) % noMessages.length];
+
+    // Optional: after many NOs, change the NO text (still doesn't move)
+    if (noCount === 5) noBtn.textContent = "Please? 😭";
+    if (noCount === 8) noBtn.textContent = "Don’t say no 😅";
+    if (noCount === 12) noBtn.textContent = "Okay… YES? 🥺";
+  });
+
+  // ---- confetti ----
+  function spawnConfetti() {
+    const confetti = document.getElementById("confetti");
+    if (!confetti) return;
+
+    confetti.innerHTML = "";
+    const pieces = 70;
+
+    for (let i = 0; i < pieces; i++) {
+      const p = document.createElement("div");
+      p.className = "piece";
+      p.style.left = Math.random() * 100 + "%";
+      p.style.top = -10 - Math.random() * 30 + "px";
+      p.style.transform = `rotate(${Math.random() * 180}deg)`;
+      p.style.animationDuration = 1.8 + Math.random() * 2.2 + "s";
+      p.style.animationDelay = Math.random() * 0.25 + "s";
+
+      const hue = Math.floor(Math.random() * 360);
+      p.style.background = `hsl(${hue} 90% 60%)`;
+
+      confetti.appendChild(p);
     }
-  </script>
+  }
+</script>
+
 </body>
 </html>
